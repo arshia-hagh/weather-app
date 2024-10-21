@@ -1,24 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import rain from "././assets/Rain.svg";
-import { FormControl, InputLabel, MenuItem, Select, styled, Switch} from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, styled, Switch} from "@mui/material";
+import { getWeather } from "./services/api";
+import { TWeather } from "./server/type";
 
+interface TCity{
+  id: string
+  name: string,
+  lat: string,
+  lon: string
+}
 const cities = [
   {
+    id: '1',
     name: "Tehran",
     lat: "35.7219",
     lon: "51.3347",
   },
   {
+    id: '2',
     name: "Arak",
     lat: "34.0873",
     lon: "49.7022",
   },
   {
+    id: '3',
     name: "Isfahan",
     lat: "32.6539",
     lon: "51.6660",
   },
   {
+    id: '4',
     name: "Mashhad",
     lat: "36.2972",
     lon: "59.6067",
@@ -81,9 +93,18 @@ function App() {
     },
   }));
   const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [dataWe,setDataWe] = useState<TWeather>()
   const handleClick = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDarkMode(e.target.checked)
   };
+  const handleChange = (e: SelectChangeEvent<unknown>) => {
+    const {value} =  e.target
+    const city : TCity = JSON.parse(value as string)
+    getWeather({lat: city.lat,lon: city.lon}).then(result => {
+      setDataWe(result)
+    })
+  }
+  
   return (
     <div
       className={` h-screen  flex items-center justify-center ${
@@ -104,14 +125,14 @@ function App() {
         </div>
         <FormControl sx={{width: '50%',margin: '0px auto'}}>
           <InputLabel id="demo-simple-select-label">Cities</InputLabel>
-          <Select 
+          <Select onChange={(e) => handleChange(e)}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             label="City"
           >
-            <MenuItem >Ten</MenuItem>
-            <MenuItem value={100}>Twenty</MenuItem>
-            <MenuItem >Thirty</MenuItem>
+            {cities.map(items => (
+              <MenuItem key={items.id} value={JSON.stringify(items)}>{items.name}</MenuItem>
+            ))}
           </Select>
         </FormControl>
         <br/>
