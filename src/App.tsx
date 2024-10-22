@@ -104,15 +104,15 @@ function App() {
       setDataWe(result)
     })
   }
-  
+
   return (
     <div
-      className={` h-screen  flex items-center justify-center ${
+      className={` h-screen   flex items-center justify-center ${
         darkMode ? `bg-background--secondery-1` : `bg-background--primery-1`
       }`}
     >
       <div
-        className={` w-[60%]  relative  rounded-lg h-[50%] flex flex-col  ${
+        className={` w-[50%]  relative overflow-hidden  rounded-lg h-[60%] flex flex-col  ${
           darkMode ? "bg-background--secondery-2" : "bg-background--primery-2"
         }`}
       >
@@ -121,15 +121,16 @@ function App() {
           className="absolute left-10 top-5"
         />
         <div>
-          <img src={rain} alt="img-weather" className="w-[40%] m-auto" />
+          <img src={rain} alt="img-weather" className="w-[30%] mx-auto" />
         </div>
         <FormControl sx={{width: '50%',margin: '0px auto'}}>
           <InputLabel id="demo-simple-select-label">Cities</InputLabel>
           <Select onChange={(e) => handleChange(e)}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            label="City"
+            label="City" 
           >
+          
             {cities.map(items => (
               <MenuItem key={items.id} value={JSON.stringify(items)}>{items.name}</MenuItem>
             ))}
@@ -137,18 +138,18 @@ function App() {
         </FormControl>
         <br/>
         <div className={`border-t-2 w-[70%] relative mx-auto ${darkMode ? 'border-color--secondery' : 'border-color--primery' }`}>
-          <ul className={`flex pt-3 before:absolute before:top-0 before:left-32 before:h-full before:w-[2px] after:absolute after:top-0 after:right-32 after:h-full after:w-[2px] ${darkMode ? 'after:bg-color--secondery' : 'after:bg-color--primery' } ${darkMode ? 'before:bg-color--secondery' : 'before:bg-color--primery' } justify-around text-center`}>
-            <li className={` flex  flex-col ${darkMode ? 'text-color--secondery' : 'text-color--primery' } `}>
-              <a href="#">aa</a>
-              <a href="#">a</a>
+          <ul className={`flex pt-3 before:absolute before:top-0 before:left-[27%] before:h-full before:w-[2px] after:absolute after:top-0 after:right-[32%] after:h-full after:w-[2px] ${darkMode ? 'after:bg-color--secondery' : 'after:bg-color--primery' } ${darkMode ? 'before:bg-color--secondery' : 'before:bg-color--primery' } justify-around text-center`}>
+            <li className={` flex font-bold flex-col ${darkMode ? 'text-color--secondery' : 'text-color--primery' } `}>
+              <a href="#">TEMP</a>
+              <a href="#">{Math.round(dataWe?.main.temp as number)}</a>
             </li>
-            <li className={` flex  flex-col ${darkMode ? 'text-color--secondery' : 'text-color--primery' } `}>
-              <a href="#">a</a>
-              <a href="#">a</a>
+            <li className={` flex font-bold  flex-col ${darkMode ? 'text-color--secondery' : 'text-color--primery' } `}>
+              <a href="#">DISCRIPTION</a>
+              <a href="#">{dataWe?.weather.map(item => item.main)}</a>
             </li>
-            <li className={` flex  flex-col ${darkMode ? 'text-color--secondery' : 'text-color--primery' } `}>
-              <a href="#">a</a>
-              <a href="#">a</a>
+            <li className={` flex font-bold  flex-col ${darkMode ? 'text-color--secondery' : 'text-color--primery' } `}>
+              <a href="#">HUMIDITY</a>
+              <a href="#">{dataWe?.main.humidity}</a>
             </li>
           </ul>
         </div>
