@@ -106,7 +106,7 @@ function App() {
   const [dataWe, setDataWe] = useState<TWeather>();
   const [dergeeTemp,setDergeeTemp] =  useState<string>('K')
   const [temp,setTemp] = useState<number>()
-  console.log(temp)
+ 
 
   const handleClick = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDarkMode(e.target.checked);
