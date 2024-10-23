@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { getWeather } from "./services/api";
 import { TWeather } from "./server/type";
+import { useLocalStorage } from "./Hooks/useLocalStorage";
 
 interface TCity {
   id: string;
@@ -101,8 +102,12 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 function App() {
-  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const [darkMode, setDarkMode] = useLocalStorage<boolean>('theme',false);
   const [dataWe, setDataWe] = useState<TWeather>();
+  const [dergeeTemp,setDergeeTemp] =  useState<string>('K')
+  const [temp,setTemp] = useState<number>()
+  console.log(temp)
+
   const handleClick = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDarkMode(e.target.checked);
   };
@@ -111,11 +116,27 @@ function App() {
     const city: TCity = JSON.parse(value as string);
     getWeather({ lat: city.lat, lon: city.lon }).then((result) => {
       setDataWe(result);
+      setTemp(Math.round(result.main.temp))
     });
   };
+  const handleTemp = () => {
+    if(dergeeTemp === 'K'){
+      setTemp(getTemp(dataWe?.main.temp as number).far)
+      setDergeeTemp('F')
+    }
+    else if(dergeeTemp === 'F'){
+      setTemp(getTemp(dataWe?.main.temp as number).can)
+      setDergeeTemp('C')
+    }
+    else{
+      setTemp(getTemp(dataWe?.main.temp as number).kel)
+      setDergeeTemp('K')
+    }
+  }
   useEffect(() => {
     getWeather({lat:'35.7219',lon:'51.3347'}).then(results => {
       setDataWe(results)
+      setTemp(Math.round(results.main.temp))
     })
   },[setDataWe])
   const main = dataWe?.weather.find((items) => items.id === items.id)?.main;
@@ -134,17 +155,17 @@ function App() {
         <MaterialUISwitch
           checked={darkMode}
           onChange={(e) => handleClick(e)}
-          className="absolute left-10 top-5"
+          className="absolute left-[5%] top-[3%]"
         />
         <div>
           <img
             src={iconsimg(main as string)}
             alt="img-weather"
-            className="w-[30%] mx-auto"
+            className="lg:w-[30%] md:w-[50%] sm:w-[50%] mx-auto"
           />
         </div>
         
-          <div className=" mx-auto w-[30%]">
+          <div className=" mx-auto lg:w-[30%] md:w-[50%] sm:w-[80%]">
 
           <select title="Cities" className="outline-none font-semibold w-full h-10 shadow-[4px_5px_3px_#000]  transition-all rounded border-2 focus:border-[#3f51b5]" autoFocus onChange={(e) => handleChange(e)}>
             {cities.map((items) => (
@@ -157,12 +178,16 @@ function App() {
         
         <br />
         <div
-          className={`border-t-2 w-[70%] relative mx-auto ${
+          className={`border-t-2 flex-wrap lg:w-[70%] md:w-full sm:w-full  relative mx-auto ${
             darkMode ? "border-color--secondery" : "border-color--primery"
           }`}
         >
           <ul
-            className={`flex pt-3 before:absolute before:top-0 before:left-[27%] before:h-full before:w-[2px] after:absolute after:top-0 after:right-[32%] after:h-full after:w-[2px] ${
+            className={`flex lg:flex-row md:flex-row pt-3 
+              md:before:h-full md:before:w-[2px]  md:after:top-0 md:after:right-[32%] md:after:h-full md:after:w-[2px]
+              sm:before:h-[2px]  sm:after:h-[2px] sm:after:w-full sm:flex-col sm:gap-4 sm:before:w-full sm:before:top-[35%] sm:before:left-0
+              sm:after:top-[70%]
+              before:absolute lg:before:top-0 lg:before:left-[27%] md:before:top-0 md:before:left-[27%] lg:before:h-full lg:before:w-[2px] after:absolute lg:after:top-0 lg:after:right-[32%] lg:after:h-full lg:after:w-[2px] ${
               darkMode ? "after:bg-color--secondery" : "after:bg-color--primery"
             } ${
               darkMode
@@ -176,7 +201,7 @@ function App() {
               } `}
             >
               <a href="#">TEMP</a>
-              <a href="#">{Math.round(dataWe?.main.temp as number)}</a>
+              <a href="#" onClick={() => handleTemp()}>{temp}{dergeeTemp}</a>
             </li>
             <li
               className={` flex font-bold  flex-col ${
@@ -207,6 +232,13 @@ function dayornight() {
   } else if(h >= 15 && h <= 6) {
     return clearN;
   }
+}
+function getTemp(weTemp : number){
+  const k = weTemp;
+  const f = (k - 273.15) * 9/5 + 32;
+  const c = k - 273.15;
+  const temp = {kel:Math.floor(k), far:Math.floor(f), can:Math.floor(c)};
+  return temp
 }
 function iconsimg(icon: string) {
   switch (icon) {
