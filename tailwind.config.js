@@ -12,6 +12,9 @@ export default {
       colors:{
         'color--primery': '#000',
         'color--secondery': '#fff'
+      },
+      screens:{
+        'sm': '350px'
       }
     },
   },
